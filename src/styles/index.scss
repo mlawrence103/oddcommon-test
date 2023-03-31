@@ -58,3 +58,16 @@ body {
 .playing-video-small {
   border: 2px solid red;
 }
+
+/****** DETAIL PLAYER ******/
+#detail-player {
+  background-color: black;
+  width: 100%;
+  height: 100vh;
+}
+
+#detail-player video {
+  margin-top: 200px;
+  width: 80%;
+  margin-left: 10%;
+}

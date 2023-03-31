@@ -1,9 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDetailPlayer } from '../redux/reducer';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 
 const VideoContainer = props => {
+  const dispatch = useDispatch();
   const { vid } = props;
   const iconSize = '25';
   const [liked, setLiked] = useState(false);
@@ -49,7 +51,12 @@ const VideoContainer = props => {
     <div className="video-container">
       {/* <iframe src={vid.player_embed_url} /> */}
       {vid.uri.split('/').pop() == playingVideoId ? (
-        <video autoPlay className="video-thumbnail">
+        <video
+          autoPlay
+          muted
+          className="video-thumbnail"
+          onClick={() => dispatch(toggleDetailPlayer(true))}
+        >
           <source src={playingVideoFile} type="video/mp4" />
           Sorry there was an error playing this video
         </video>
