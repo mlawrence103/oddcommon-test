@@ -5,13 +5,19 @@ import Styles from './index.module.scss';
 
 // Import Components
 import { Logo } from './components/Logo';
+import VideoList from './components/VideoList';
+import { Provider } from 'react-redux';
+
+// Import Global State Store
+import store from './redux/store';
 
 // App
 const App = () => {
   return (
-    <>
+    <Provider store={store}>
       <Logo className={Styles.logo} />
-    </>
+      <VideoList />
+    </Provider>
   );
 };
 
