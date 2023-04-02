@@ -8,8 +8,6 @@ const VideoContainer = props => {
   const dispatch = useDispatch();
   const { vid, id } = props;
   const iconSize = '25';
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisLiked] = useState(false);
 
   const playingVideoId = useSelector(state => {
     return state.videoId;
@@ -22,6 +20,9 @@ const VideoContainer = props => {
   const videoList = useSelector(state => {
     return state.videoDataList;
   });
+
+  const [liked, setLiked] = useState(videoList[id].liked);
+  const [disliked, setDisLiked] = useState(videoList[id].disliked);
 
   useEffect(() => {
     if (videoList[id]) {

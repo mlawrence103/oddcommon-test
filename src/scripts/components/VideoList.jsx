@@ -20,10 +20,6 @@ const VideoList = () => {
     return state.detailView;
   });
 
-  const allVideos = useSelector(state => {
-    return state.videoDataList;
-  });
-
   //set all video info at initial load
   useEffect(() => {
     const videoDataObj = {};
