@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoContainer from './VideoContainer.jsx'; //import component that will wrap data for each video
-import { fetchVideoFromServer, createVideoListData } from '../redux/reducer.js';
+import { fetchVideoFromServer, createVideoListData, setVideo } from '../redux/reducer.js';
 import config from '../data/index.js';
 import gsap from 'gsap';
 import { Observer } from 'gsap/Observer';
@@ -26,15 +26,26 @@ const VideoList = () => {
 
   //set all video info at initial load
   useEffect(() => {
-    const videoData = config.data.map(video => {
-      const vidInfo = {};
-      vidInfo.id = video.uri.split('/').pop();
-      vidInfo.thumbnail = video.pictures.base_link;
-      vidInfo.liked = false;
-      vidInfo.disLiked = false;
-      return vidInfo;
+    // const videoData = config.data.map(video => {
+    //   const vidInfo = {};
+    //   vidInfo.id = video.uri.split('/').pop();
+    //   vidInfo.thumbnail = video.pictures.base_link;
+    //   vidInfo.liked = false;
+    //   vidInfo.disLiked = false;
+    //   return vidInfo;
+    // });
+    const videoDataObj = {};
+    config.data.forEach((video, idx) => {
+      const id = video.uri.split('/').pop();
+      videoDataObj[id] = {
+        id: id,
+        order: idx,
+        thumbnail: video.pictures.base_link,
+        liked: false,
+        disliked: false,
+      };
     });
-    dispatch(createVideoListData(videoData));
+    dispatch(createVideoListData(videoDataObj));
   }, []);
 
   useEffect(() => {
@@ -56,6 +67,7 @@ const VideoList = () => {
         }
         if (playingVideo !== centeredVideo.id) {
           dispatch(fetchVideoFromServer(centeredVideo.id));
+          // dispatch(setVideo(centeredVideo.id));
         } else {
           // console.log('SAME VIDEO');
         }

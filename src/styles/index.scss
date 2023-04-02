@@ -70,4 +70,20 @@ body {
   margin-top: 200px;
   width: 80%;
   margin-left: 10%;
+  z-index: 2;
+}
+
+.player-arrows {
+  position: absolute;
+  margin-top: 45vh;
+  width: 90%;
+  margin-left: 5%;
+  justify-content: space-between;
+  z-index: 0;
+}
+
+#exit-detail {
+  position: absolute;
+  margin-left: 90%;
+  margin-top: 150px;
 }

@@ -22,6 +22,7 @@ export const setVideo = (id, file) => {
     file,
   };
 };
+
 //track if in detail video player
 export const toggleDetailPlayer = toggleDetailView => {
   return {
@@ -47,19 +48,40 @@ export const fetchVideoFromServer = id => {
 };
 
 // thunk creator
-export const createVideoListData = videoDataList => {
+// export const createVideoListData = videoDataList => {
+//   return async dispatch => {
+//     try {
+//       for (let i = 0; i < videoDataList.length; i++) {
+//         const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoDataList[i].id}`);
+//         const videoFiles = res.data.request.files.progressive;
+//         const biggestVideoFile = videoFiles.reduce((prev, current) => {
+//           return prev.width > current.width ? prev : current;
+//         });
+//         videoDataList[i].videoUrl = biggestVideoFile.url;
+//       }
+//       console.log(videoDataList);
+//       dispatch(setVideoListData(videoDataList));
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+// };
+
+export const createVideoListData = videoDataObj => {
   return async dispatch => {
     try {
-      for (let i = 0; i < videoDataList.length; i++) {
-        const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoDataList[i].id}`);
-        const videoFiles = res.data.request.files.progressive;
-        const biggestVideoFile = videoFiles.reduce((prev, current) => {
-          return prev.width > current.width ? prev : current;
-        });
-        videoDataList[i].videoUrl = biggestVideoFile.url;
-      }
-      console.log(videoDataList);
-      dispatch(setVideoListData(videoDataList));
+      const fullObj = { ...videoDataObj };
+      // const videoIds = Object.keys(videoDataObj);
+      // for (let i = 0; i < videoIds.length; i++) {
+      //   const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoIds[i]}`);
+      //   const videoFiles = res.data.request.files.progressive;
+      //   const biggestVideoFile = videoFiles.reduce((prev, current) => {
+      //     return prev.width > current.width ? prev : current;
+      //   });
+      //   fullObj[videoIds[i]].videoUrl = biggestVideoFile.url;
+      // }
+      // console.log(fullObj);
+      dispatch(setVideoListData(fullObj));
     } catch (error) {
       console.log(error);
     }

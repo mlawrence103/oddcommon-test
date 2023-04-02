@@ -19,6 +19,14 @@ const VideoContainer = props => {
     return state.videoFile;
   });
 
+  const videoList = useSelector(state => {
+    return state.videoDataList;
+  });
+
+  useEffect(() => {
+    videoList;
+  }, []);
+
   function toggleLikeDislike(status) {
     console.log('clicked: ', status);
     // if clicked dislike and already disliked, toggle dislike off
