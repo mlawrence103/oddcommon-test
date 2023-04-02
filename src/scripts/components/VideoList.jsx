@@ -20,18 +20,35 @@ const VideoList = () => {
     return state.detailView;
   });
 
+  const videoDataList = useSelector(state => {
+    return state.videoDataList;
+  });
+
   //set all video info at initial load
   useEffect(() => {
+    console.log('>>>> ', videoDataList);
     const videoDataObj = {};
+    let persistLiked = false;
+    let persisDisliked = false;
     config.data.forEach((video, idx) => {
       const id = video.uri.split('/').pop();
+      if (videoDataList[id].liked) {
+        persistLiked = true;
+      } else {
+        persistLiked = false;
+      }
+      if (videoDataList[id].disliked) {
+        persisDisliked = true;
+      } else {
+        persisDisliked = false;
+      }
       videoDataObj[id] = {
         id: id,
         name: video.name,
         order: idx,
         thumbnail: video.pictures.base_link,
-        liked: false,
-        disliked: false,
+        liked: persistLiked,
+        disliked: persisDisliked,
       };
     });
     dispatch(createVideoListData(videoDataObj));
