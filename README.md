@@ -77,3 +77,25 @@ The setup here is very basic so modify as you see fit.
   - `styles`
     - `_fonts.scss` - Font imports & base styles
     - `index.scss` - Global Styles
+
+# Mabel Documentation
+
+### Tech Stack
+
+- React
+- Redux
+- Redux Persist
+- Gsap (for scroll events)
+- React Icons
+
+### Known Bugs
+
+Not smooth scrolling
+
+- Exepected cause: resizing elements when loading playing videos is causing improper re-triggering of events
+- Expected solution: look at inspector to see what elements are changing on scroll and add state console logs
+
+Reloads with detail view open
+
+- Expected cause: adding persistant state to track the like/dislike is also tracking the state of the detail viewer
+- Expected solution: either ignore this element of the redux store in persist or reset this element of state on each reload

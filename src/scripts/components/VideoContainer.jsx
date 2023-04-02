@@ -4,6 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleDetailPlayer, updateLikeStatus, updateDislikeStatus } from '../redux/reducer';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 
+// This is the element shown in the overall list of videos
+// there is one VideoContainer per element
+// This will be a static thumbnail is the video is not active, and it will play the video on mute if the video is active
+//if a video or thumbnail is clicked, it will go into detail mode
+
 const VideoContainer = props => {
   const dispatch = useDispatch();
   const { vid, id } = props;
@@ -66,13 +71,17 @@ const VideoContainer = props => {
           autoPlay
           muted
           className="video-thumbnail"
-          onClick={() => dispatch(toggleDetailPlayer(true))}
+          onClick={() => dispatch(toggleDetailPlayer(true, id))}
         >
           <source src={playingVideoFile} type="video/mp4" />
           Sorry there was an error playing this video
         </video>
       ) : (
-        <img className="video-thumbnail" src={vid.pictures.base_link} />
+        <img
+          className="video-thumbnail"
+          src={vid.pictures.base_link}
+          onClick={() => dispatch(toggleDetailPlayer(true, id))}
+        />
       )}
       <div className="video-title">{vid.name}</div>
       <div className="like-dislike-row flex-row">

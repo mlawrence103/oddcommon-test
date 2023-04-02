@@ -8,7 +8,6 @@ const UPDATE_LIKE_STATUS = 'UPDATE_LIKE_STATUS';
 const UPDATE_DISLIKE_STATUS = 'UPDATE_DISLIKE_STATUS';
 
 //action creators
-
 export const createVideoListData = videoData => {
   return {
     type: CREATE_VIDEO_LIST_DATA,
@@ -26,7 +25,7 @@ export const setVideo = (id, file) => {
 };
 
 //track if in detail video player
-export const toggleDetailPlayer = toggleDetailView => {
+export const _toggleDetailPlayer = toggleDetailView => {
   return {
     type: TOGGLE_DETAIL_PLAYER,
     toggleDetailView,
@@ -42,6 +41,7 @@ export const updateLikeStatus = (id, isLiked) => {
   };
 };
 
+// set dislike status
 export const updateDislikeStatus = (id, isDisliked) => {
   return {
     type: UPDATE_DISLIKE_STATUS,
@@ -66,6 +66,12 @@ export const fetchVideoFromServer = id => {
   };
 };
 
+export const toggleDetailPlayer = (toggleDetailView, id = '') => {
+  return async dispatch => {
+    dispatch(_toggleDetailPlayer(toggleDetailView));
+  };
+};
+
 //set initial state of video playing to be empty string
 let initialState = {
   videoId: '',
@@ -74,6 +80,7 @@ let initialState = {
   videoDataList: [],
 };
 
+// interim objects used when updateing like and silike status so not directly modifying state
 let stateCopy = {};
 let relevantVideoCopy = {};
 
@@ -96,6 +103,7 @@ export default function reducer(state = initialState, action) {
         detailView: action.toggleDetailView,
       };
     case UPDATE_LIKE_STATUS:
+      // update the relevant video object's like status without directly modifying state
       stateCopy = { ...state.videoDataList };
       relevantVideoCopy = { ...stateCopy[action.id] };
       relevantVideoCopy.liked = action.status;
@@ -105,6 +113,7 @@ export default function reducer(state = initialState, action) {
         videoDataList: stateCopy,
       };
     case UPDATE_DISLIKE_STATUS:
+      // update the relevant video object's dislike status without directly modifying state
       stateCopy = { ...state.videoDataList };
       relevantVideoCopy = { ...stateCopy[action.id] };
       relevantVideoCopy.disliked = action.status;

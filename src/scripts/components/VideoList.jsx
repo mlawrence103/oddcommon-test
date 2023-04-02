@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoContainer from './VideoContainer.jsx'; //import component that will wrap data for each video
-import { fetchVideoFromServer, createVideoListData, setVideo } from '../redux/reducer.js';
+import { fetchVideoFromServer, createVideoListData, toggleDetailPlayer } from '../redux/reducer.js';
 import config from '../data/index.js';
 import gsap from 'gsap';
 import { Observer } from 'gsap/Observer';
@@ -26,12 +26,13 @@ const VideoList = () => {
 
   //set all video info at initial load
   useEffect(() => {
-    console.log('>>>> ', videoDataList);
+    toggleDetailPlayer(false);
     const videoDataObj = {};
     let persistLiked = false;
     let persisDisliked = false;
     config.data.forEach((video, idx) => {
       const id = video.uri.split('/').pop();
+      //maintain any persisted state for likes and dislikes
       if (videoDataList[id].liked) {
         persistLiked = true;
       } else {
@@ -51,17 +52,23 @@ const VideoList = () => {
         disliked: persisDisliked,
       };
     });
+    // create object of all video data that can be lookd up by id
+    // NOTE: the video urls are not being included in this object because of the amount of lookup time to get the
+    // proxy urls. instead the id is being passed to the subelement for lookup at the relevant time
     dispatch(createVideoListData(videoDataObj));
   }, []);
 
+  // watch scroll position using gsap observer to see if there is a new centered video
   useEffect(() => {
     const list = document.getElementById('video-list');
     let allObservers = Observer.getAll();
     allObservers.forEach(obs => obs.kill());
+    // create the observer
     Observer.create({
       type: 'wheel,touch',
       target: list,
       tolerance: 0,
+      //when y position changes, check to see which video element is centered
       onChangeY: () => {
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
@@ -73,14 +80,12 @@ const VideoList = () => {
         }
         if (playingVideo !== centeredVideo.id) {
           dispatch(fetchVideoFromServer(centeredVideo.id));
-          // dispatch(setVideo(centeredVideo.id));
-        } else {
-          // console.log('SAME VIDEO');
         }
       },
     });
   }, [playingVideo]);
 
+  // map over all of the videos in the config and create sub elements
   return (
     <div id="video-list" className="flex-col">
       {inDetailPlayer ? (

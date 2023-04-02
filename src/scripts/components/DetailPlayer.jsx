@@ -21,6 +21,7 @@ const DetailPlayer = () => {
     return state.videoDataList;
   });
 
+  // go to previous video using order from original config that is stored in state object
   function playPrevVideo() {
     const videoListData = Object.values(videoList);
     let prevVideoId;
@@ -41,6 +42,7 @@ const DetailPlayer = () => {
     dispatch(fetchVideoFromServer(prevVideoId));
   }
 
+  // go to next video using order from original config that is stored in state object
   function playNextVideo() {
     const videoListData = Object.values(videoList);
     const numVideos = videoListData.length;
