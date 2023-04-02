@@ -68,6 +68,19 @@ export const fetchVideoFromServer = id => {
 
 export const toggleDetailPlayer = (toggleDetailView, id = '') => {
   return async dispatch => {
+    //if there is an id passed, it means that there was a thumbnail clicked and the active video is not the one that was centered on screen
+    if (id.length) {
+      try {
+        const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${id}`);
+        const videoFiles = res.data.request.files.progressive;
+        const biggestVideoFile = videoFiles.reduce((prev, current) => {
+          return prev.width > current.width ? prev : current;
+        });
+        dispatch(setVideo(id, biggestVideoFile.url));
+      } catch (error) {
+        console.log(error);
+      }
+    }
     dispatch(_toggleDetailPlayer(toggleDetailView));
   };
 };

@@ -71,7 +71,7 @@ const VideoContainer = props => {
           autoPlay
           muted
           className="video-thumbnail"
-          onClick={() => dispatch(toggleDetailPlayer(true, id))}
+          onClick={() => dispatch(toggleDetailPlayer(true))}
         >
           <source src={playingVideoFile} type="video/mp4" />
           Sorry there was an error playing this video

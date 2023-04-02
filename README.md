@@ -88,6 +88,10 @@ The setup here is very basic so modify as you see fit.
 - Gsap (for scroll events)
 - React Icons
 
+### Component Structure
+
+Main component is VideoList that establishes the global state object with the video information. This also wraps around the VideoContainer components that show the individual thumbnails and in place players. DetailView is the component that comes up with a video or thumbnail is clicked.
+
 ### Known Bugs
 
 Not smooth scrolling
