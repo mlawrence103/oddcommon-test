@@ -38,7 +38,15 @@ export const updateLikeStatus = (id, isLiked) => {
   return {
     type: UPDATE_LIKE_STATUS,
     id,
-    isLiked,
+    status: isLiked,
+  };
+};
+
+export const updateDislikeStatus = (id, isDisliked) => {
+  return {
+    type: UPDATE_DISLIKE_STATUS,
+    id,
+    status: isDisliked,
   };
 };
 
@@ -58,17 +66,6 @@ export const fetchVideoFromServer = id => {
   };
 };
 
-// export const createVideoListData = videoDataObj => {
-//   return async dispatch => {
-//     try {
-//       const fullObj = { ...videoDataObj };
-//       dispatch(setVideoListData(fullObj));
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-// };
-
 //set initial state of video playing to be empty string
 let initialState = {
   videoId: '',
@@ -76,6 +73,9 @@ let initialState = {
   detailView: false,
   videoDataList: [],
 };
+
+let stateCopy = {};
+let relevantVideoCopy = {};
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -96,11 +96,19 @@ export default function reducer(state = initialState, action) {
         detailView: action.toggleDetailView,
       };
     case UPDATE_LIKE_STATUS:
-      const stateCopy = { ...state };
-      const relevantVideoCopy = { ...stateCopy[action.id] };
-      relevantVideoCopy.liked = action.liked;
+      stateCopy = { ...state.videoDataList };
+      relevantVideoCopy = { ...stateCopy[action.id] };
+      relevantVideoCopy.liked = action.status;
       stateCopy[action.id] = relevantVideoCopy;
-      console.log(`setting liked status of ${action.id} to ${action.liked}`);
+      return {
+        ...state,
+        videoDataList: stateCopy,
+      };
+    case UPDATE_DISLIKE_STATUS:
+      stateCopy = { ...state.videoDataList };
+      relevantVideoCopy = { ...stateCopy[action.id] };
+      relevantVideoCopy.disliked = action.status;
+      stateCopy[action.id] = relevantVideoCopy;
       return {
         ...state,
         videoDataList: stateCopy,
