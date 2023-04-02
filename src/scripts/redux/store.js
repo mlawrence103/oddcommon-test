@@ -6,6 +6,7 @@ import videoReducer from './reducer';
 
 const persistConfig = {
   key: 'root',
+
   version: 1,
   storage,
 };
