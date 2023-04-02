@@ -1,15 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleDetailPlayer } from '../redux/reducer';
+import { toggleDetailPlayer, updateLikeStatus, updateDislikeStatus } from '../redux/reducer';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 
 const VideoContainer = props => {
   const dispatch = useDispatch();
-  const { vid } = props;
+  const { vid, id } = props;
   const iconSize = '25';
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisLiked] = useState(false);
 
   const playingVideoId = useSelector(state => {
     return state.videoId;
@@ -19,38 +17,51 @@ const VideoContainer = props => {
     return state.videoFile;
   });
 
+  const videoList = useSelector(state => {
+    return state.videoDataList;
+  });
+
+  const [liked, setLiked] = useState(videoList[id].liked);
+  const [disliked, setDisLiked] = useState(videoList[id].disliked);
+
+  useEffect(() => {
+    if (videoList[id]) {
+      setLiked(videoList[id].liked);
+      setDisLiked(videoList[id].disliked);
+    }
+  }, [videoList[id]]);
+
   function toggleLikeDislike(status) {
     console.log('clicked: ', status);
     // if clicked dislike and already disliked, toggle dislike off
     if (status == 'dislike' && disliked) {
-      setDisLiked(false);
+      dispatch(updateDislikeStatus(id, false));
     }
     // if clicked dislike and neutral, toggle dislike on
     else if (status == 'dislike' && !disliked) {
-      setDisLiked(true);
+      dispatch(updateDislikeStatus(id, true));
       // if liked was already selected, toggle like off
       if (liked) {
-        setLiked(false);
+        dispatch(updateLikeStatus(id, false));
       }
     }
     // if clicked like and already liked, toggle like off
     else if (status == 'like' && liked) {
-      setLiked(false);
+      dispatch(updateLikeStatus(id, false));
     }
     // if clicked like and neutral, toggle like on
     else if (status == 'like' && !liked) {
-      setLiked(true);
+      dispatch(updateLikeStatus(id, true));
       // if disliked was already selected, toggle dislike off
       if (disliked) {
-        setDisLiked(false);
+        dispatch(updateDislikeStatus(id, false));
       }
     }
   }
 
   return (
     <div className="video-container">
-      {/* <iframe src={vid.player_embed_url} /> */}
-      {vid.uri.split('/').pop() == playingVideoId ? (
+      {id == playingVideoId ? (
         <video
           autoPlay
           muted

@@ -3,14 +3,16 @@ import axios from 'axios';
 //action types (variables to store possible state changing actions)
 const SET_VIDEO = 'SET_VIDEO';
 const TOGGLE_DETAIL_PLAYER = 'TOGGLE_DETAIL_PLAYER';
-const SET_VIDEO_LIST_DATA = 'SET_VIDEO_LIST_DATA';
+const CREATE_VIDEO_LIST_DATA = 'CREATE_VIDEO_LIST_DATA';
+const UPDATE_LIKE_STATUS = 'UPDATE_LIKE_STATUS';
+const UPDATE_DISLIKE_STATUS = 'UPDATE_DISLIKE_STATUS';
 
 //action creators
 
-export const setVideoListData = data => {
+export const createVideoListData = videoData => {
   return {
-    type: SET_VIDEO_LIST_DATA,
-    data,
+    type: CREATE_VIDEO_LIST_DATA,
+    data: { ...videoData },
   };
 };
 
@@ -22,11 +24,29 @@ export const setVideo = (id, file) => {
     file,
   };
 };
+
 //track if in detail video player
 export const toggleDetailPlayer = toggleDetailView => {
   return {
     type: TOGGLE_DETAIL_PLAYER,
     toggleDetailView,
+  };
+};
+
+//update like status
+export const updateLikeStatus = (id, isLiked) => {
+  return {
+    type: UPDATE_LIKE_STATUS,
+    id,
+    status: isLiked,
+  };
+};
+
+export const updateDislikeStatus = (id, isDisliked) => {
+  return {
+    type: UPDATE_DISLIKE_STATUS,
+    id,
+    status: isDisliked,
   };
 };
 
@@ -46,26 +66,6 @@ export const fetchVideoFromServer = id => {
   };
 };
 
-// thunk creator
-export const createVideoListData = videoDataList => {
-  return async dispatch => {
-    try {
-      for (let i = 0; i < videoDataList.length; i++) {
-        const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoDataList[i].id}`);
-        const videoFiles = res.data.request.files.progressive;
-        const biggestVideoFile = videoFiles.reduce((prev, current) => {
-          return prev.width > current.width ? prev : current;
-        });
-        videoDataList[i].videoUrl = biggestVideoFile.url;
-      }
-      console.log(videoDataList);
-      dispatch(setVideoListData(videoDataList));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
-
 //set initial state of video playing to be empty string
 let initialState = {
   videoId: '',
@@ -74,9 +74,12 @@ let initialState = {
   videoDataList: [],
 };
 
+let stateCopy = {};
+let relevantVideoCopy = {};
+
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case SET_VIDEO_LIST_DATA:
+    case CREATE_VIDEO_LIST_DATA:
       return {
         ...state,
         videoDataList: action.data,
@@ -91,6 +94,24 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         detailView: action.toggleDetailView,
+      };
+    case UPDATE_LIKE_STATUS:
+      stateCopy = { ...state.videoDataList };
+      relevantVideoCopy = { ...stateCopy[action.id] };
+      relevantVideoCopy.liked = action.status;
+      stateCopy[action.id] = relevantVideoCopy;
+      return {
+        ...state,
+        videoDataList: stateCopy,
+      };
+    case UPDATE_DISLIKE_STATUS:
+      stateCopy = { ...state.videoDataList };
+      relevantVideoCopy = { ...stateCopy[action.id] };
+      relevantVideoCopy.disliked = action.status;
+      stateCopy[action.id] = relevantVideoCopy;
+      return {
+        ...state,
+        videoDataList: stateCopy,
       };
     default:
       return state;
