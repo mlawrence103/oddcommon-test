@@ -26,19 +26,12 @@ const VideoList = () => {
 
   //set all video info at initial load
   useEffect(() => {
-    // const videoData = config.data.map(video => {
-    //   const vidInfo = {};
-    //   vidInfo.id = video.uri.split('/').pop();
-    //   vidInfo.thumbnail = video.pictures.base_link;
-    //   vidInfo.liked = false;
-    //   vidInfo.disLiked = false;
-    //   return vidInfo;
-    // });
     const videoDataObj = {};
     config.data.forEach((video, idx) => {
       const id = video.uri.split('/').pop();
       videoDataObj[id] = {
         id: id,
+        name: video.name,
         order: idx,
         thumbnail: video.pictures.base_link,
         liked: false,
@@ -87,7 +80,7 @@ const VideoList = () => {
               id={video.uri.split('/').pop()}
               key={`video-${video.uri.split('/').pop()}`}
             >
-              <VideoContainer vid={video} />
+              <VideoContainer vid={video} id={video.uri.split('/').pop()} />
             </div>
           );
         })

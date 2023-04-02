@@ -1,12 +1,12 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleDetailPlayer } from '../redux/reducer';
+import { toggleDetailPlayer, updateLikeStatus } from '../redux/reducer';
 import { AiFillDislike, AiFillLike, AiOutlineDislike, AiOutlineLike } from 'react-icons/ai';
 
 const VideoContainer = props => {
   const dispatch = useDispatch();
-  const { vid } = props;
+  const { vid, id } = props;
   const iconSize = '25';
   const [liked, setLiked] = useState(false);
   const [disliked, setDisLiked] = useState(false);
@@ -43,10 +43,13 @@ const VideoContainer = props => {
     }
     // if clicked like and already liked, toggle like off
     else if (status == 'like' && liked) {
+      dispatch(updateLikeStatus(vid.id, false));
       setLiked(false);
     }
     // if clicked like and neutral, toggle like on
     else if (status == 'like' && !liked) {
+      console.log(vid);
+      dispatch(updateLikeStatus(vid.id, true));
       setLiked(true);
       // if disliked was already selected, toggle dislike off
       if (disliked) {
@@ -58,7 +61,7 @@ const VideoContainer = props => {
   return (
     <div className="video-container">
       {/* <iframe src={vid.player_embed_url} /> */}
-      {vid.uri.split('/').pop() == playingVideoId ? (
+      {id == playingVideoId ? (
         <video
           autoPlay
           muted
@@ -68,10 +71,14 @@ const VideoContainer = props => {
           <source src={playingVideoFile} type="video/mp4" />
           Sorry there was an error playing this video
         </video>
+      ) : videoList[id] ? (
+        <img className="video-thumbnail" src={videoList[id].thumbnail} />
       ) : (
-        <img className="video-thumbnail" src={vid.pictures.base_link} />
+        <></>
+        // <img className="video-thumbnail" src={vid.pictures.base_link} />
       )}
-      <div className="video-title">{vid.name}</div>
+      {videoList[id] ? <div className="video-title">{videoList[id].name}</div> : <></>}
+      {/* <div className="video-title">{vid.name}</div> */}
       <div className="like-dislike-row flex-row">
         <div className="like-dislike-icon" onClick={() => toggleLikeDislike('dislike')}>
           {disliked ? <AiFillDislike size={iconSize} /> : <AiOutlineDislike size={iconSize} />}

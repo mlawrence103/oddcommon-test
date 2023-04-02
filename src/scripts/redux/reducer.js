@@ -3,14 +3,16 @@ import axios from 'axios';
 //action types (variables to store possible state changing actions)
 const SET_VIDEO = 'SET_VIDEO';
 const TOGGLE_DETAIL_PLAYER = 'TOGGLE_DETAIL_PLAYER';
-const SET_VIDEO_LIST_DATA = 'SET_VIDEO_LIST_DATA';
+const CREATE_VIDEO_LIST_DATA = 'CREATE_VIDEO_LIST_DATA';
+const UPDATE_LIKE_STATUS = 'UPDATE_LIKE_STATUS';
+const UPDATE_DISLIKE_STATUS = 'UPDATE_DISLIKE_STATUS';
 
 //action creators
 
-export const setVideoListData = data => {
+export const createVideoListData = videoData => {
   return {
-    type: SET_VIDEO_LIST_DATA,
-    data,
+    type: CREATE_VIDEO_LIST_DATA,
+    data: { ...videoData },
   };
 };
 
@@ -31,6 +33,15 @@ export const toggleDetailPlayer = toggleDetailView => {
   };
 };
 
+//update like status
+export const updateLikeStatus = (id, isLiked) => {
+  return {
+    type: UPDATE_LIKE_STATUS,
+    id,
+    isLiked,
+  };
+};
+
 // thunk creator
 export const fetchVideoFromServer = id => {
   return async dispatch => {
@@ -47,46 +58,16 @@ export const fetchVideoFromServer = id => {
   };
 };
 
-// thunk creator
-// export const createVideoListData = videoDataList => {
+// export const createVideoListData = videoDataObj => {
 //   return async dispatch => {
 //     try {
-//       for (let i = 0; i < videoDataList.length; i++) {
-//         const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoDataList[i].id}`);
-//         const videoFiles = res.data.request.files.progressive;
-//         const biggestVideoFile = videoFiles.reduce((prev, current) => {
-//           return prev.width > current.width ? prev : current;
-//         });
-//         videoDataList[i].videoUrl = biggestVideoFile.url;
-//       }
-//       console.log(videoDataList);
-//       dispatch(setVideoListData(videoDataList));
+//       const fullObj = { ...videoDataObj };
+//       dispatch(setVideoListData(fullObj));
 //     } catch (error) {
 //       console.log(error);
 //     }
 //   };
 // };
-
-export const createVideoListData = videoDataObj => {
-  return async dispatch => {
-    try {
-      const fullObj = { ...videoDataObj };
-      // const videoIds = Object.keys(videoDataObj);
-      // for (let i = 0; i < videoIds.length; i++) {
-      //   const res = await axios.post(`https://proxy.oddcommon.dev/vimeo/${videoIds[i]}`);
-      //   const videoFiles = res.data.request.files.progressive;
-      //   const biggestVideoFile = videoFiles.reduce((prev, current) => {
-      //     return prev.width > current.width ? prev : current;
-      //   });
-      //   fullObj[videoIds[i]].videoUrl = biggestVideoFile.url;
-      // }
-      // console.log(fullObj);
-      dispatch(setVideoListData(fullObj));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-};
 
 //set initial state of video playing to be empty string
 let initialState = {
@@ -98,7 +79,7 @@ let initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case SET_VIDEO_LIST_DATA:
+    case CREATE_VIDEO_LIST_DATA:
       return {
         ...state,
         videoDataList: action.data,
@@ -113,6 +94,16 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         detailView: action.toggleDetailView,
+      };
+    case UPDATE_LIKE_STATUS:
+      const stateCopy = { ...state };
+      const relevantVideoCopy = { ...stateCopy[action.id] };
+      relevantVideoCopy.liked = action.liked;
+      stateCopy[action.id] = relevantVideoCopy;
+      console.log(`setting liked status of ${action.id} to ${action.liked}`);
+      return {
+        ...state,
+        videoDataList: stateCopy,
       };
     default:
       return state;
