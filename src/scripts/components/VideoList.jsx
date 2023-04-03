@@ -33,16 +33,17 @@ const VideoList = () => {
     config.data.forEach((video, idx) => {
       const id = video.uri.split('/').pop();
       //maintain any persisted state for likes and dislikes
-      if (videoDataList[id].liked) {
+      if (videoDataList[id] && videoDataList[id].liked) {
         persistLiked = true;
       } else {
         persistLiked = false;
       }
-      if (videoDataList[id].disliked) {
+      if (videoDataList[id] && videoDataList[id].disliked) {
         persisDisliked = true;
       } else {
         persisDisliked = false;
       }
+
       videoDataObj[id] = {
         id: id,
         name: video.name,

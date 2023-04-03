@@ -26,8 +26,8 @@ const VideoContainer = props => {
     return state.videoDataList;
   });
 
-  const [liked, setLiked] = useState(videoList[id].liked);
-  const [disliked, setDisLiked] = useState(videoList[id].disliked);
+  const [liked, setLiked] = useState(videoList[id] ? videoList[id].liked : false);
+  const [disliked, setDisLiked] = useState(videoList[id] ? videoList[id].disliked : false);
 
   useEffect(() => {
     if (videoList[id]) {
